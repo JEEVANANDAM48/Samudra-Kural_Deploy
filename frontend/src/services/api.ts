@@ -3,30 +3,28 @@ import { Platform } from 'react-native';
 import { getAuthToken } from '../storage/storage';
 
 function resolveApiBaseUrl(): string {
-  if (Platform.OS === 'web') {
-    return 'http://localhost:8000/api/v1';
-  }
-
-  // 1. Check Expo Go hostUri / debuggerHost dynamically
-  const debuggerHost =
-    Constants.expoConfig?.hostUri ||
-    (Constants as any).manifest?.debuggerHost ||
-    (Constants as any).manifest2?.extra?.expoGo?.debuggerHost;
-
-  if (debuggerHost) {
-    const ip = debuggerHost.split(':')[0];
-    if (ip && ip !== 'localhost' && ip !== '127.0.0.1') {
-      return `http://${ip}:8000/api/v1`;
-    }
-  }
-
-  // 2. Check environment variable
+  // 1. Prioritize explicitly set environment variable (e.g. Render/Vercel URL)
   if (process.env.EXPO_PUBLIC_API_URL) {
     return process.env.EXPO_PUBLIC_API_URL;
   }
 
-  // 3. Fallback to current machine WiFi IP
-  return 'http://192.168.0.5:8000/api/v1';
+  // 2. Check Expo Go debugger host dynamically ONLY in development mode
+  if (__DEV__) {
+    const debuggerHost =
+      Constants.expoConfig?.hostUri ||
+      (Constants as any).manifest?.debuggerHost ||
+      (Constants as any).manifest2?.extra?.expoGo?.debuggerHost;
+
+    if (debuggerHost) {
+      const ip = debuggerHost.split(':')[0];
+      if (ip && ip !== 'localhost' && ip !== '127.0.0.1') {
+        return `http://${ip}:8000/api/v1`;
+      }
+    }
+  }
+
+  // 3. Fallback to production live Render backend URL
+  return 'https://samudra-kural-deploy.onrender.com/api/v1';
 }
 
 // Base API URL configured for Expo environment with dynamic host detection
