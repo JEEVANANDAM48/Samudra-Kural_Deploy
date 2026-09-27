@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Samudra Kural - Ocean Intelligence & Safety Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0A192F 0%, #020C1B 100%);
+      --accent-blue: #00F0FF;
+      --accent-teal: #00D2FF;
+      --card-bg: rgba(16, 36, 64, 0.65);
+      --card-border: rgba(0, 240, 255, 0.2);
+      --text-main: #E6F1FF;
+      --text-muted: #8892B0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--accent-blue);
+      border-radius: 50px;
+      color: var(--accent-blue);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #FFFFFF, var(--accent-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 35px;
+      line-height: 1.6;
+    }
+
+    .status-card {
+      background: rgba(2, 12, 27, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 35px;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #00FF66;
+      box-shadow: 0 0 10px #00FF66;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      border-radius: 16px;
+      text-decoration: none;
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-blue);
+      box-shadow: 0 10px 25px rgba(0, 240, 255, 0.15);
+      background: rgba(0, 240, 255, 0.05);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00F0FF 0%, #0072FF 100%);
+      color: #020C1B;
+      font-weight: 700;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 10px 30px rgba(0, 240, 255, 0.4);
+      transform: translateY(-5px);
+    }
+
+    .btn-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .btn-sub {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    footer {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 20px;
+    }
+
+    footer a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <span class="badge">Live Production System</span>
+    <h1>Samudra Kural</h1>
+    <p class="subtitle">Ocean Intelligence, Fishermen Safety, Drift Prediction & SOS Emergency Platform</p>
+
+    <div class="status-card">
+      <div class="status-item">
+        <div class="dot"></div>
+        <span>FastAPI Render Backend</span>
+      </div>
+      <div class="status-item">
+        <div class="dot"></div>
+        <span>Supabase PostGIS DB</span>
+      </div>
+      <div class="status-item">
+        <div class="dot"></div>
+        <span>EAS Android APK Build</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <a href="https://samudra-kural-deploy.onrender.com/docs" target="_blank" class="btn btn-primary">
+        <span class="btn-title">📄 Swagger API Docs</span>
+        <span class="btn-sub">Interactive OpenAPI Specification</span>
+      </a>
+
+      <a href="https://expo.dev/artifacts/eas/-4i1mg1ylvB5Jqp1qXeHLkwImyPWTcTnLL2nWUDtQLI.apk" target="_blank" class="btn">
+        <span class="btn-title">📱 Download Android APK</span>
+        <span class="btn-sub">EAS Preview Build Package</span>
+      </a>
+
+      <a href="https://samudra-kural-deploy.onrender.com/api/v1/health/db" target="_blank" class="btn">
+        <span class="btn-title">🗄️ Database Health</span>
+        <span class="btn-sub">Supabase PostGIS Connection Status</span>
+      </a>
+
+      <a href="https://samudra-kural-deploy.onrender.com/api/v1/health/postgis" target="_blank" class="btn">
+        <span class="btn-title">🌐 PostGIS Extension</span>
+        <span class="btn-sub">Spatial GIS Engine Version</span>
+      </a>
+    </div>
+
+    <footer>
+      Backend URL: <a href="https://samudra-kural-deploy.onrender.com" target="_blank">https://samudra-kural-deploy.onrender.com</a>
+    </footer>
+  </div>
+
+</body>
+</html>

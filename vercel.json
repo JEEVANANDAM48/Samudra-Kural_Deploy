@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/api/v1/:path*",
+      "destination": "https://samudra-kural-deploy.onrender.com/api/v1/:path*"
+    },
+    {
+      "source": "/docs",
+      "destination": "https://samudra-kural-deploy.onrender.com/docs"
+    },
+    {
+      "source": "/redoc",
+      "destination": "https://samudra-kural-deploy.onrender.com/redoc"
+    }
+  ]
+}
