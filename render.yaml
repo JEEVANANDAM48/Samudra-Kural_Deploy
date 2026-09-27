@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: samudra-kural-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    region: singapore
+    plan: free
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: false
+      - key: POSTGRES_SERVER
+        value: aws-0-ap-northeast-2.pooler.supabase.com
+      - key: POSTGRES_PORT
+        value: 5432
+      - key: POSTGRES_USER
+        value: postgres.czcoctddjjwueqwksqwe
+      - key: POSTGRES_DB
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: ASYNC_DATABASE_URL
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true
