@@ -66,6 +66,13 @@ export function getRecordingState(): RecordingState {
 
 let activeNativePlayer: any = null;
 
+let ExpoFileSystem: any = null;
+try {
+  ExpoFileSystem = require('expo-file-system');
+} catch (e) {
+  ExpoFileSystem = null;
+}
+
 export async function playBase64Audio(
   base64Audio: string,
   onStart?: () => void,
@@ -76,7 +83,10 @@ export async function playBase64Audio(
   try {
     await stopNativeSpeech();
 
-    const dataUri = `data:audio/wav;base64,${base64Audio}`;
+    const rawBase64 = base64Audio.includes(',') ? base64Audio.split(',')[1] : base64Audio;
+    const dataUri = base64Audio.startsWith('data:')
+      ? base64Audio
+      : `data:audio/mp3;base64,${rawBase64}`;
 
     // Web Playback
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
@@ -101,7 +111,53 @@ export async function playBase64Audio(
       }
     }
 
-    // Native Playback via expo-audio (Expo SDK 57 / Expo Go)
+    // Native Playback (Android / iOS): Save base64 to temp file URI for Android ExoPlayer/MediaPlayer
+    let fileUri = dataUri;
+    if (Platform.OS !== 'web' && ExpoFileSystem && ExpoFileSystem.cacheDirectory) {
+      try {
+        const tempPath = `${ExpoFileSystem.cacheDirectory}voice_tts_cache.mp3`;
+        await ExpoFileSystem.writeAsStringAsync(tempPath, rawBase64, {
+          encoding: ExpoFileSystem.EncodingType.Base64,
+        });
+        fileUri = tempPath;
+      } catch (fsErr) {
+        console.warn('[Voice Playback] FileSystem write error:', fsErr);
+      }
+    }
+
+    // Native Playback via expo-av
+    if (ExpoAV && ExpoAV.Audio && ExpoAV.Audio.Sound) {
+      try {
+        if (ExpoAV.Audio.setAudioModeAsync) {
+          await ExpoAV.Audio.setAudioModeAsync({
+            playsInSilentModeIOS: true,
+            allowsRecordingIOS: false,
+            staysActiveInBackground: false,
+          });
+        }
+        const { sound } = await ExpoAV.Audio.Sound.createAsync(
+          { uri: fileUri },
+          { shouldPlay: true }
+        );
+        activeNativePlayer = sound;
+        if (onStart) onStart();
+
+        sound.setOnPlaybackStatusUpdate((status: any) => {
+          if (status.didJustFinish || status.error) {
+            if (activeNativePlayer === sound) {
+              activeNativePlayer = null;
+            }
+            sound.unloadAsync().catch(() => {});
+            if (onDone) onDone();
+          }
+        });
+        return true;
+      } catch (err) {
+        console.warn('[Voice Playback] expo-av Sound error:', err);
+      }
+    }
+
+    // Native Playback via expo-audio (Expo SDK 57)
     if (ExpoAudio && (ExpoAudio.createAudioPlayer || ExpoAudio.AudioModule?.AudioPlayer)) {
       try {
         if (ExpoAudio.setAudioModeAsync) {
@@ -113,9 +169,9 @@ export async function playBase64Audio(
 
         let player: any = null;
         if (ExpoAudio.createAudioPlayer) {
-          player = ExpoAudio.createAudioPlayer(dataUri);
+          player = ExpoAudio.createAudioPlayer(fileUri);
         } else if (ExpoAudio.AudioModule?.AudioPlayer) {
-          player = new ExpoAudio.AudioModule.AudioPlayer(dataUri, 500, false, 0);
+          player = new ExpoAudio.AudioModule.AudioPlayer(fileUri, 500, false, 0);
         }
 
         if (player) {
@@ -136,32 +192,7 @@ export async function playBase64Audio(
           return true;
         }
       } catch (err) {
-        console.warn('[Voice Playback] expo-audio player failed, trying fallback:', err);
-      }
-    }
-
-    // Native Playback Fallback via expo-av
-    if (ExpoAV && ExpoAV.Audio && ExpoAV.Audio.Sound) {
-      try {
-        const { sound } = await ExpoAV.Audio.Sound.createAsync(
-          { uri: dataUri },
-          { shouldPlay: true }
-        );
-        activeNativePlayer = sound;
-        if (onStart) onStart();
-
-        sound.setOnPlaybackStatusUpdate((status: any) => {
-          if (status.didJustFinish) {
-            if (activeNativePlayer === sound) {
-              activeNativePlayer = null;
-            }
-            sound.unloadAsync().catch(() => {});
-            if (onDone) onDone();
-          }
-        });
-        return true;
-      } catch (err) {
-        console.warn('[Voice Playback] expo-av Sound error:', err);
+        console.warn('[Voice Playback] expo-audio player failed:', err);
       }
     }
   } catch (err) {
